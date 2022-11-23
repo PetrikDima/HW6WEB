@@ -1,5 +1,4 @@
 from pathlib import Path
-from folder_sorter import sorting
 
 
 JPEG_IMAGES = []
@@ -10,6 +9,8 @@ MP3_AUDIO = []
 OGG_AUDIO = []
 WAV_AUDIO = []
 AMR_AUDIO = []
+OTHER = []
+ARCHIVES = []
 AVI_VIDEO = []
 MP4_VIDEO = []
 MOV_VIDEO = []
@@ -20,53 +21,53 @@ TXT_DOCUMENTS = []
 PDF_DOCUMENTS = []
 XLSX_DOCUMENTS = []
 PPTX_DOCUMENTS = []
-MY_OTHER = []
-ARCHIVES = []
 
 REGISTER_EXTENSIONS = {
     'JPEG': JPEG_IMAGES,
     'PNG': PNG_IMAGES,
     'JPG': JPG_IMAGES,
     'SVG': SVG_IMAGES,
-    'AVI': AVI_VIDEO,
-    'MP4': MP4_VIDEO,
-    'MOV': MOV_VIDEO,
-    'MKV': MKV_VIDEO,
-    'MP3': MP3_AUDIO,
-    'OGG': OGG_AUDIO,
-    'WAV': WAV_AUDIO,
-    'AMR': AMR_AUDIO,
-    'DOC': DOC_DOCUMENTS,
-    'DOCX': DOCX_DOCUMENTS,
-    'TXT': TXT_DOCUMENTS,
-    'PDF': PDF_DOCUMENTS,
-    'XLSX': XLSX_DOCUMENTS,
-    'PPTX': PPTX_DOCUMENTS,
     'ZIP': ARCHIVES,
-    'GZ': ARCHIVES,
-    'TAR': ARCHIVES
+    "GZ": ARCHIVES,
+    "TAR": ARCHIVES,
+    "OGG": OGG_AUDIO,
+    'MP3': MP3_AUDIO,
+    "WAV": WAV_AUDIO,
+    "AMR": AMR_AUDIO,
+    "AVI": AVI_VIDEO,
+    "MP4": MP4_VIDEO,
+    "MOV": MOV_VIDEO,
+    "MKV": MKV_VIDEO,
+    "DOC": DOC_DOCUMENTS,
+    "DOCX": DOCX_DOCUMENTS,
+    "TXT": TXT_DOCUMENTS,
+    "PDF": PDF_DOCUMENTS,
+    "XLSX": XLSX_DOCUMENTS,
+    "PPTX": PPTX_DOCUMENTS
 }
+
 
 FOLDERS = []
 EXTENSIONS = set()
 UNKNOWN = set()
 
 
-def get_ext(filename):
+def get_extension(filename: str) -> str:
     return Path(filename).suffix[1:].upper()
 
 
-def scan(folder: Path):
-    for elem in folder.iterdir():
-        if elem.is_dir():
-            if elem.name not in ('archives', 'video', 'audio', 'documents', 'images', 'MY_OTHER'):
-                FOLDERS.append(elem)
-                scan(elem)
+def scan(folder: Path) -> None:
+    for item in folder.iterdir():
+        if item.is_dir():
+            if item.name not in ('archives', 'video', 'audio', 'documents', 'images', 'OTHERS'):
+                FOLDERS.append(item)
+                scan(item)
             continue
-        ext = get_ext(elem.name)
-        fullname = folder / elem.name
+
+        ext = get_extension(item.name)
+        fullname = folder / item.name
         if not ext:
-            MY_OTHER.append(fullname)
+            OTHER.append(fullname)
         else:
             try:
                 container = REGISTER_EXTENSIONS[ext]
@@ -74,5 +75,4 @@ def scan(folder: Path):
                 container.append(fullname)
             except KeyError:
                 UNKNOWN.add(ext)
-                MY_OTHER.append(fullname)
-    return sorting(folder)
+                OTHER.append(fullname)

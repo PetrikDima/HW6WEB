@@ -4,9 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+aiopath = "*"
 
 [dev-packages]
 faker = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.10"
